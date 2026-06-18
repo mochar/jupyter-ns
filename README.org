@@ -3,7 +3,10 @@ Companian emacs package for the [[https://www.github.com/mochar/jupyter_ns][jupy
 #+begin_src emacs-lisp
 (use-package jupyter-ns
   :vc (:url "https://github.com/mochar/jupyter-ns" :rev :newest)
+  ;; Be careful with use-package-hook-name-suffix
+  :hook (emacs-startup-hook . jupyter-ns-mode)
   :bind (("C-j n n" . jupyter-ns-switch)
          ("C-j n k" . jupyter-ns-kill)))
 #+end_src
 
+In org-mode, if a heading has a (inherited) tag that is prefixed by "%", that tag name will be used as the namespace for all the source blocks within it.  
