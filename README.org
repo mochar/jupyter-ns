@@ -1,0 +1,9 @@
+Companian emacs package for the [[https://www.github.com/mochar/jupyter_ns][jupyter_ns]] Jupyter extension.
+
+#+begin_src emacs-lisp
+(use-package jupyter-ns
+  :vc (:url "https://github.com/mochar/jupyter-ns" :rev :newest)
+  :bind (("C-j n n" . jupyter-ns-switch)
+         ("C-j n k" . jupyter-ns-kill)))
+#+end_src
+

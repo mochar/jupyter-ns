@@ -2,10 +2,9 @@
 
 ;;; Requires
 
-(require 'jupyter)
+(require 'cl-lib)
 (require 'subr-x)
-
-(require 'jupyter-utils)
+(require 'jupyter)
 
 ;;; Variables
 
@@ -21,12 +20,15 @@
 ;;; Utils
 
 (defun jupyter-ns--repl-clients ()
+  "Return all jupyter client objects with alive REPL buffer."
   (cl-loop for client in (jupyter-all-objects 'jupyter--clients)
            when (and (object-of-class-p client 'jupyter-repl-client)
                      (buffer-live-p (oref client buffer)))
            collect client))
 
 ;;; Eval
+
+;; NOTE Don't really use these anymore..
 
 (defun jupyter-ns-eval (code)
   "Eval CODE and make clean up result."
