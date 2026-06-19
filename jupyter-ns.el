@@ -190,22 +190,20 @@
   "Prepend %%ns magic to body of a jupyter-python block based on ns tag.
 
 Meant to be used as override:
-(advice-add 'org-babel-expand-body:jupyter :filter-args #'jupyter-ns-inject-cell-magic)"
-  (let ((body (nth 0 args))
-        (params (nth 1 args))
-        (var-lines (nth 2 args))
-        (lang (nth 3 args)))
+(advice-add 'org-babel-jupyter--execute :filter-args #'jupyter-ns-inject-cell-magic)"
+  (let ((code (nth 0 args))
+        (async-p (nth 1 args)))
     (save-excursion
       ;; Ensure point is at the source block being executed
       (when org-babel-current-src-block-location
         (goto-char org-babel-current-src-block-location))
       
       (when-let ((tag-ns (jupyter-ns-org-ns-from-tags))
-                 (current-lang (or lang (org-babel-jupyter--src-block-kernel-language))))
-        (when (string= current-lang "python")
-          (setq body (concat "%%ns " tag-ns "\n" body)))))
+                 (lang (jupyter-kernel-language jupyter-current-client)))
+        (when (string= lang "python")
+          (setq code (concat "%%ns " tag-ns "\n" code)))))
     
-    (list body params var-lines lang)))
+    (list code async-p)))
 
 ;;; Minor mode
 
@@ -242,13 +240,14 @@ Meant to be used as override:
     (advice-add 'jupyter-repl-restart-kernel :around #'jupyter-ns-handle-restart)
     (dolist (client (jupyter-ns--repl-clients))
       (jupyter-ns-setup client))
-    (advice-add 'org-babel-expand-body:jupyter :filter-args #'jupyter-ns-inject-cell-magic))
+    (advice-add 'org-babel-jupyter--execute :filter-args #'jupyter-ns-inject-cell-magic)
+    )
    (t
     (remove-hook 'jupyter-repl-mode-hook #'jupyter-ns-setup)
     (advice-remove 'jupyter-repl-restart-kernel #'jupyter-ns-handle-restart)
     (dolist (client (jupyter-ns--repl-clients))
       (jupyter-ns-cleanup client))
-    (advice-remove 'org-babel-expand-body:jupyter #'jupyter-ns-inject-cell-magic)
+    (advice-remove 'org-babel-jupyter--execute #'jupyter-ns-inject-cell-magic)
     )))
 
 ;;; Commands
