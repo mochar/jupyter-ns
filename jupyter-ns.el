@@ -162,6 +162,14 @@
 (cl-defmethod jupyter-ns-spaces (&context (major-mode jupyter-repl-mode))
   (bound-and-true-p jupyter-ns-spaces))
 
+;;; Associated python buffers
+
+(cl-defmethod jupyter-ns-space (&context (major-mode python-mode))
+  (buffer-local-value 'jupyter-ns-space (oref jupyter-current-client buffer)))
+
+(cl-defmethod jupyter-ns-spaces (&context (major-mode python-mode))
+  (buffer-local-value 'jupyter-ns-spaces (oref jupyter-current-client buffer)))
+
 ;;; Org mode
 
 (cl-defmethod jupyter-ns-spaces (&context (major-mode org-mode))
